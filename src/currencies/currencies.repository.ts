@@ -2,7 +2,7 @@ import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { validateOrReject } from 'class-validator';
 import { EntityRepository, Repository } from 'typeorm';
 import { Currencies } from './currencies.entity';
-import { CurrenciesInputType } from './types/currencies-input.types';
+import { CurrenciesInputDto } from './dto/currencies-input.dto';
 
 @EntityRepository(Currencies)
 export class CurrenciesRepository extends Repository<Currencies> {
@@ -15,12 +15,12 @@ export class CurrenciesRepository extends Repository<Currencies> {
     return result;
   }
 
-  async createCurrency(currenciesInputType: CurrenciesInputType): Promise<Currencies> {
+  async createCurrency(CurrenciesInputDto: CurrenciesInputDto): Promise<Currencies> {
     const createCurrency = new Currencies();
-    /* createCurrency.currency = currenciesInputType.currency;
-    createCurrency.value = currenciesInputType.value; */
+    /* createCurrency.currency = CurrenciesInputDto.currency;
+    createCurrency.value = CurrenciesInputDto.value; */
     // as duas linhas acima podem ser feitas da forma abaixo
-    Object.assign(createCurrency, currenciesInputType);
+    Object.assign(createCurrency, CurrenciesInputDto);
 
     try {
       await validateOrReject(createCurrency);
@@ -32,7 +32,7 @@ export class CurrenciesRepository extends Repository<Currencies> {
     return createCurrency;
   }
 
-  async updateCurrency({ currency, value }: CurrenciesInputType): Promise<Currencies> {
+  async updateCurrency({ currency, value }: CurrenciesInputDto): Promise<Currencies> {
     const result = await this.findOne({ currency });
 
     if (!result) {
