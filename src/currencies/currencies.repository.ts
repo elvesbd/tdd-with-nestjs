@@ -1,4 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { validateOrReject } from 'class-validator';
 import { EntityRepository, Repository } from 'typeorm';
 import { Currencies } from './currencies.entity';
 import { CurrenciesInputType } from './types/currencies-input.types';
@@ -21,7 +22,13 @@ export class CurrenciesRepository extends Repository<Currencies> {
     // as duas linhas acima podem ser feitas da forma abaixo
     Object.assign(createCurrency, currenciesInputType);
 
-    await this.save(createCurrency);
+    try {
+      await validateOrReject(createCurrency);
+      await this.save(createCurrency);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
     return createCurrency;
   }
 
