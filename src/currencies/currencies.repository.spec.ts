@@ -1,6 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Currencies } from './currencies.entity';
 import { CurrenciesRepository } from './currencies.repository';
 
 describe('CurrenciesRepository', () => {
@@ -69,6 +68,21 @@ describe('CurrenciesRepository', () => {
 
     it('should be return created data', async () => {
       expect(await repository.createCurrency(mockData)).toEqual(mockData);
+    });
+  });
+
+  describe('updateCurrency()', () => {
+    it('should be called findOne with correct params', async () => {
+      repository.findOne = jest.fn().mockReturnValue({});
+      await repository.updateCurrency(mockData);
+      expect(repository.findOne).toBeCalledWith({ currency: 'USD' });
+    });
+
+    it('should be throw findOne return empty', async () => {
+      repository.findOne = jest.fn().mockReturnValue(undefined);
+      await expect(repository.updateCurrency(mockData)).rejects.toThrow(
+        new NotFoundException(`The currency ${mockData.currency} not foundFound`),
+      );
     });
   });
 });
