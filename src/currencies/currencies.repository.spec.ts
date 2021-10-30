@@ -35,11 +35,5 @@ describe('CurrenciesRepository', () => {
         new NotFoundException('Resource not Found'),
       );
     });
-
-    it('should be throw findOne return entity', async () => {
-      repository.findOne = jest.fn().mockReturnValue(mockData);
-
-      expect(await repository.getCurrency('USD')).toEqual(mockData);
-    });
   });
 });
