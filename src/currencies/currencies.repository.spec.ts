@@ -23,14 +23,12 @@ describe('CurrenciesRepository', () => {
   describe('getCurrency()', () => {
     it('should be called findOne with correct params', async () => {
       repository.findOne = jest.fn().mockReturnValue({});
-
       await repository.getCurrency('USD');
       expect(repository.findOne).toBeCalledWith({ currency: 'USD' });
     });
 
     it('should be throw findOne return empty', async () => {
       repository.findOne = jest.fn().mockReturnValue(undefined);
-
       await expect(repository.getCurrency('USD')).rejects.toThrow(
         new NotFoundException('Resource not Found'),
       );
@@ -38,7 +36,6 @@ describe('CurrenciesRepository', () => {
 
     it('should be throw findOne return entity', async () => {
       repository.findOne = jest.fn().mockReturnValue(mockData);
-
       expect(await repository.getCurrency('USD')).toEqual(mockData);
     });
   });
@@ -52,9 +49,17 @@ describe('CurrenciesRepository', () => {
 
     it('should be called save with correct params', async () => {
       repository.save = jest.fn().mockReturnValue(mockData);
-
       await repository.createCurrency(mockData);
       expect(repository.save).toBeCalledWith(mockData);
+    });
+
+    it('should be throw when save fails', async () => {
+      repository.save = jest.fn().mockRejectedValue(new Error());
+      await expect(repository.createCurrency(mockData)).rejects.toThrow();
+    });
+
+    it('should be return created data', async () => {
+      expect(await repository.createCurrency(mockData)).toEqual(mockData);
     });
   });
 });

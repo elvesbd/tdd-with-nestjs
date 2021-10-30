@@ -15,8 +15,14 @@ export class CurrenciesRepository extends Repository<Currencies> {
   }
 
   async createCurrency(currenciesInputType: CurrenciesInputType): Promise<Currencies> {
-    const result = await this.save(currenciesInputType);
-    return new Currencies();
+    const createCurrency = new Currencies();
+    /* createCurrency.currency = currenciesInputType.currency;
+    createCurrency.value = currenciesInputType.value; */
+    // as duas linhas acima podem ser feitas da forma abaixo
+    Object.assign(createCurrency, currenciesInputType);
+
+    await this.save(createCurrency);
+    return createCurrency;
   }
 
   async updateCurrency({ currency, value }: CurrenciesInputType): Promise<Currencies> {
