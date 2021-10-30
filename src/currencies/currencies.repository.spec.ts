@@ -44,11 +44,17 @@ describe('CurrenciesRepository', () => {
   });
 
   describe('createCurrency()', () => {
-    it('should be called findOne with correct params', async () => {
-      repository.findOne = jest.fn().mockReturnValue({});
+    // essa funcionalidade dentro do teste garante que a chamada será feita para o
+    // nosso repositório mock e não para o repositório real.
+    beforeEach(() => {
+      repository.save = jest.fn();
+    });
 
-      await repository.getCurrency('USD');
-      expect(repository.findOne).toBeCalledWith({ currency: 'USD' });
+    it('should be called save with correct params', async () => {
+      repository.save = jest.fn().mockReturnValue(mockData);
+
+      await repository.createCurrency(mockData);
+      expect(repository.save).toBeCalledWith(mockData);
     });
   });
 });
