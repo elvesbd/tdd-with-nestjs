@@ -86,5 +86,18 @@ describe('CurrenciesRepository', () => {
       await repository.updateCurrency(mockData);
       expect(repository.save).toBeCalledWith(mockData);
     });
+
+    it('should be throw when save fails', async () => {
+      repository.findOne = jest.fn().mockReturnValue(mockData);
+      repository.save = jest.fn().mockRejectedValue(new Error());
+      await expect(repository.createCurrency(mockData)).rejects.toThrow();
+    });
+
+    it('should be returns update data', async () => {
+      repository.findOne = jest.fn().mockReturnValue({ currency: 'USD', value: 1 });
+      repository.save = jest.fn().mockReturnValue({});
+      const result = await repository.updateCurrency({ currency: 'USD', value: 2 });
+      expect(result).toEqual({ currency: 'USD', value: 2 });
+    });
   });
 });
