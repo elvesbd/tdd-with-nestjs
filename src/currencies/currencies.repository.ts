@@ -38,6 +38,8 @@ export class CurrenciesRepository extends Repository<Currencies> {
     if (!result) {
       throw new NotFoundException(`The currency ${currency} not foundFound`);
     }
+    result.value = value;
+    this.save(result);
 
     return new Currencies();
   }

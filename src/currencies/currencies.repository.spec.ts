@@ -13,6 +13,7 @@ describe('CurrenciesRepository', () => {
 
     repository = module.get<CurrenciesRepository>(CurrenciesRepository);
     mockData = { currency: 'USD', value: 1 };
+    repository.save = jest.fn();
   });
 
   it('should be defined', () => {
@@ -40,12 +41,6 @@ describe('CurrenciesRepository', () => {
   });
 
   describe('createCurrency()', () => {
-    // essa funcionalidade dentro do teste garante que a chamada será feita para o
-    // nosso repositório mock e não para o repositório real.
-    beforeEach(() => {
-      repository.save = jest.fn();
-    });
-
     it('should be called save with correct params', async () => {
       repository.save = jest.fn().mockReturnValue(mockData);
       await repository.createCurrency(mockData);
@@ -73,7 +68,7 @@ describe('CurrenciesRepository', () => {
 
   describe('updateCurrency()', () => {
     it('should be called findOne with correct params', async () => {
-      repository.findOne = jest.fn().mockReturnValue({});
+      repository.findOne = jest.fn().mockReturnValue(mockData);
       await repository.updateCurrency(mockData);
       expect(repository.findOne).toBeCalledWith({ currency: 'USD' });
     });
@@ -83,6 +78,13 @@ describe('CurrenciesRepository', () => {
       await expect(repository.updateCurrency(mockData)).rejects.toThrow(
         new NotFoundException(`The currency ${mockData.currency} not foundFound`),
       );
+    });
+
+    it('should be called save with correct params', async () => {
+      repository.findOne = jest.fn().mockReturnValue(mockData);
+      repository.save = jest.fn().mockReturnValue(mockData);
+      await repository.updateCurrency(mockData);
+      expect(repository.save).toBeCalledWith(mockData);
     });
   });
 });
