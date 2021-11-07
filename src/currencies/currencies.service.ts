@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Currencies } from './currencies.entity';
 import { CurrenciesRepository } from './currencies.repository';
 import { CurrenciesInputDto } from './dto/currencies-input.dto';
@@ -6,8 +6,10 @@ import { CurrenciesInputDto } from './dto/currencies-input.dto';
 @Injectable()
 export class CurrenciesService {
   constructor(private currenciesRepository: CurrenciesRepository) {}
+  private logger = new Logger(CurrenciesService.name);
 
   async getCurrency(currency: string): Promise<Currencies> {
+    this.logger.log(currency);
     return await this.currenciesRepository.getCurrency(currency);
   }
 

@@ -1,10 +1,11 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
@@ -17,9 +18,11 @@ import { CurrenciesInputDto } from './dto/currencies-input.dto';
 @Controller('currencies')
 export class CurrenciesController {
   constructor(private readonly currencyService: CurrenciesService) {}
+  private logger = new Logger(CurrenciesController.name);
 
   @Get(':currency')
   async getCurrency(@Param('currency') currency: string): Promise<Currencies> {
+    this.logger.log(currency);
     return await this.currencyService.getCurrency(currency);
   }
 
@@ -28,6 +31,14 @@ export class CurrenciesController {
     @Body() currenciesInputDto: CurrenciesInputDto,
   ): Promise<Currencies> {
     return await this.currencyService.createCurrency(currenciesInputDto);
+  }
+
+  @Patch(':currency')
+  async updateCurrency(
+    @Param('currency') currency: string,
+    @Body('value') value: number,
+  ): Promise<Currencies> {
+    return await this.currencyService.updateCurrency({ currency, value });
   }
 
   @Delete(':currency')
